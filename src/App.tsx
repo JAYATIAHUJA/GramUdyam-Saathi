@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import { WifiOff } from 'lucide-react'
 import Landing from './pages/Landing'
 import Saathi from './pages/Saathi'
-import PlanPage from './pages/PlanPage'
+import PlanPage from './pages/plan/PlanPage'
 import { Didi } from './components/art'
 import { useT } from './lib/store'
 
