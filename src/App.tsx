@@ -4,6 +4,7 @@ import { WifiOff } from 'lucide-react'
 import Landing from './pages/Landing'
 import Saathi from './pages/Saathi'
 import PlanPage from './pages/PlanPage'
+import { Didi } from './components/art'
 import { useT } from './lib/store'
 
 const Officer = lazy(() => import('./pages/Officer'))
@@ -28,7 +29,19 @@ function OfflineBanner() {
   return (
     <div role="status" className="no-print sticky top-0 z-50 flex items-center justify-center gap-2 bg-ink px-4 py-2 text-sm font-semibold text-white">
       <WifiOff className="size-4" />
-      {t('No network. Your answers are saved on this phone — keep going.', 'नेटवर्क नहीं है। आपके जवाब इसी फ़ोन में सुरक्षित हैं — जारी रखें।')}
+      {t('No network. Your answers are saved on this phone, keep going.', 'नेटवर्क नहीं है। आपके जवाब इसी फ़ोन में सुरक्षित हैं, जारी रखें।')}
+    </div>
+  )
+}
+
+function Loading() {
+  const t = useT()
+  return (
+    <div className="grid h-dvh place-items-center bg-paper" role="status">
+      <div className="flex flex-col items-center gap-3">
+        <Didi mood="think" className="w-28" />
+        <p className="font-display text-[18px] font-bold text-indigo-deep">{t('Getting things ready…', 'तैयारी हो रही है…')}</p>
+      </div>
     </div>
   )
 }
@@ -41,7 +54,7 @@ export default function App() {
   return (
     <>
       <OfflineBanner />
-      <Suspense fallback={<div className="grid h-dvh place-items-center text-muted">…</div>}>
+      <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/saathi" element={<Saathi />} />
