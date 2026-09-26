@@ -1,0 +1,179 @@
+import { clsx } from 'clsx'
+import { AlertTriangle, CheckCircle2, Landmark, MapPin, Mic, MicOff, OctagonX, Pause, User, Volume2, Waves } from 'lucide-react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
+import type { Confidence } from '../engine/feasibility'
+import type { Verdict } from '../engine/plan'
+import { speak, stopSpeaking } from '../lib/speech'
+import { useApp, useT, type Lang } from '../lib/store'
+
+export function Logo({ light = false, compact = false }: { light?: boolean; compact?: boolean }) {
+  return (
+    <Link to="/" className="flex items-center gap-2.5 group" aria-label="GramUdyam Saathi home">
+      <svg viewBox="0 0 40 40" className="size-9 shrink-0" aria-hidden>
+        <rect width="40" height="40" rx="10" fill={light ? '#fff' : '#2E3A8C'} />
+        <path d="M8 29 L20 11 L32 29" fill="none" stroke="#F2A900" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" />
+        <path d="M14 29 v-6 h12 v6" fill="none" stroke={light ? '#2E3A8C' : '#fff'} strokeWidth="2.6" strokeLinejoin="round" />
+        <circle cx="20" cy="20" r="2.6" fill={light ? '#2E3A8C' : '#fff'} />
+      </svg>
+      {!compact && (
+        <span className="leading-none">
+          <span className={clsx('font-display font-bold text-[19px] block tracking-tight', light ? 'text-white' : 'text-indigo')}>GramUdyam Saathi</span>
+          <span className={clsx('text-[12px] font-medium', light ? 'text-white/70' : 'text-muted')}>ग्रामउद्यम साथी</span>
+        </span>
+      )}
+    </Link>
+  )
+}
+
+export function LangToggle({ className }: { className?: string }) {
+  const { lang, setLang } = useApp()
+  return (
+    <div role="group" aria-label="Language" className={clsx('inline-flex rounded-full bg-khadi p-1 text-sm font-semibold', className)}>
+      {(['hi', 'en'] as Lang[]).map((l) => (
+        <button
+          key={l}
+          onClick={() => setLang(l)}
+          aria-pressed={lang === l}
+          className={clsx('rounded-full px-3 py-1 transition-colors', lang === l ? 'bg-indigo text-white' : 'text-muted hover:text-ink')}
+        >
+          {l === 'hi' ? 'हिं' : 'EN'}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+const CONF: Record<Confidence, { en: string; hi: string; icon: typeof Landmark; cls: string }> = {
+  official: { en: 'Official data', hi: 'सरकारी डेटा', icon: Landmark, cls: 'bg-indigo text-white border-indigo' },
+  map: { en: 'Map', hi: 'नक्शा', icon: MapPin, cls: 'bg-go-soft text-go border-go/30' },
+  user: { en: 'You told us', hi: 'आपने बताया', icon: User, cls: 'bg-marigold-soft text-[#7a5500] border-marigold/40' },
+  model: { en: 'Estimate', hi: 'अंदाज़ा', icon: Waves, cls: 'bg-white text-muted border-muted/50 border-dashed' },
+}
+
+export function ConfidenceBadge({ c, className }: { c: Confidence; className?: string }) {
+  const t = useT()
+  const m = CONF[c]
+  const Icon = m.icon
+  return (
+    <span className={clsx('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11.5px] font-semibold whitespace-nowrap', m.cls, className)}>
+      <Icon className="size-3" aria-hidden />
+      {t(m.en, m.hi)}
+    </span>
+  )
+}
+
+export const VERDICT: Record<Verdict, { en: string; hi: string; enSub: string; hiSub: string; color: string; soft: string; icon: typeof CheckCircle2 }> = {
+  go: { en: 'Good opportunity', hi: 'अच्छा मौका', enSub: 'Right-sized and repayable', hiSub: 'सही आकार, किस्त चुक जाएगी', color: '#1B873F', soft: 'bg-go-soft', icon: CheckCircle2 },
+  caution: { en: 'Go carefully', hi: 'सोच के', enSub: 'Possible, with conditions', hiSub: 'हो सकता है, कुछ शर्तों के साथ', color: '#C77700', soft: 'bg-caution-soft', icon: AlertTriangle },
+  rethink: { en: 'Rethink', hi: 'दोबारा सोचिए', enSub: 'Repayment is at risk', hiSub: 'किस्त चुकाने में ख़तरा', color: '#B42318', soft: 'bg-risk-soft', icon: OctagonX },
+}
+
+/** The signature element: an SCA-office rubber stamp that presses down once. */
+export function VerdictStamp({ v, size = 'lg', animate = true }: { v: Verdict; size?: 'lg' | 'sm'; animate?: boolean }) {
+  const t = useT()
+  const m = VERDICT[v]
+  const Icon = m.icon
+  const lg = size === 'lg'
+  return (
+    <div
+      className={clsx('inline-flex flex-col items-center justify-center rounded-[14px] select-none', animate && 'stamp-in', lg ? 'px-5 py-3' : 'px-2.5 py-1')}
+      style={{ color: m.color, border: `${lg ? 3 : 2}px solid ${m.color}`, boxShadow: `inset 0 0 0 ${lg ? 3 : 2}px #fff, inset 0 0 0 ${lg ? 5 : 3}px ${m.color}`, transform: 'rotate(-6deg)', background: 'rgba(255,255,255,0.85)' }}
+      role="img"
+      aria-label={t(m.en, m.hi)}
+    >
+      <span className={clsx('flex items-center gap-1.5 font-display font-extrabold leading-none', lg ? 'text-[28px]' : 'text-[14px]')}>
+        <Icon className={lg ? 'size-6' : 'size-3.5'} strokeWidth={2.6} aria-hidden />
+        {t(m.en, m.hi)}
+      </span>
+      {lg && <span className="mt-1 text-[11px] font-bold tracking-wide opacity-80">{t(m.enSub, m.hiSub)}</span>}
+    </div>
+  )
+}
+
+export function VerdictPill({ v }: { v: Verdict }) {
+  const t = useT()
+  const m = VERDICT[v]
+  const Icon = m.icon
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold" style={{ color: m.color, background: m.color + '14', border: `1px solid ${m.color}40` }}>
+      <Icon className="size-3.5" aria-hidden />
+      {t(m.en, m.hi)}
+    </span>
+  )
+}
+
+export function ReadAloud({ text, lang, className, label }: { text: string; lang: Lang; className?: string; label?: string }) {
+  const [on, setOn] = useState(false)
+  const t = useT()
+  useEffect(() => () => stopSpeaking(), [])
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        if (on) {
+          stopSpeaking()
+          setOn(false)
+        } else {
+          setOn(true)
+          speak(text, lang, () => setOn(false))
+        }
+      }}
+      className={clsx('inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 text-sm font-semibold text-indigo hover:border-indigo/40', className)}
+      aria-label={on ? t('Stop reading', 'पढ़ना रोकें') : t('Read aloud', 'सुनें')}
+    >
+      {on ? <Pause className="size-4" /> : <Volume2 className="size-4" />}
+      {label ?? (on ? t('Stop', 'रोकें') : t('Listen', 'सुनें'))}
+    </button>
+  )
+}
+
+export function MicButton({ listening, onClick, disabled, size = 76 }: { listening: boolean; onClick: () => void; disabled?: boolean; size?: number }) {
+  const t = useT()
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={listening ? t('Stop listening', 'सुनना बंद करें') : t('Speak', 'बोलिए')}
+      className={clsx(
+        'relative grid place-items-center rounded-full text-indigo-deep shadow-[0_6px_0_#b98200] transition-transform active:translate-y-1 active:shadow-[0_2px_0_#b98200] disabled:opacity-40',
+        listening ? 'bg-white listening' : 'bg-marigold',
+      )}
+      style={{ width: size, height: size }}
+    >
+      {disabled ? <MicOff className="size-8" /> : <Mic className="size-8" strokeWidth={2.4} />}
+    </button>
+  )
+}
+
+export function Stat({ label, value, sub, tone }: { label: ReactNode; value: ReactNode; sub?: ReactNode; tone?: 'go' | 'caution' | 'risk' }) {
+  return (
+    <div>
+      <div className="text-[13px] text-muted font-medium">{label}</div>
+      <div className={clsx('num text-[26px] font-bold leading-tight', tone === 'go' && 'text-go', tone === 'caution' && 'text-caution', tone === 'risk' && 'text-risk')}>{value}</div>
+      {sub && <div className="text-[12.5px] text-muted">{sub}</div>}
+    </div>
+  )
+}
+
+export function Tag({ children, className }: { children: ReactNode; className?: string }) {
+  return <span className={clsx('inline-flex items-center rounded-md bg-khadi px-1.5 py-0.5 text-[11.5px] font-semibold text-muted', className)}>{children}</span>
+}
+
+export function FactRow({ label, value, source, year, c }: { label: string; value: string; source: string; year: string; c: Confidence }) {
+  return (
+    <div className="flex items-start justify-between gap-3 py-2.5 border-b border-line last:border-0">
+      <div className="min-w-0">
+        <div className="text-[14px] font-medium">{label}</div>
+        <div className="text-[11.5px] text-muted truncate">
+          {source}, {year}
+        </div>
+      </div>
+      <div className="text-right shrink-0">
+        <div className="num text-[17px] font-bold">{value}</div>
+        <ConfidenceBadge c={c} />
+      </div>
+    </div>
+  )
+}
