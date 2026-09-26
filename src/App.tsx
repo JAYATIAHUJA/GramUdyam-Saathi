@@ -8,7 +8,7 @@ import { Didi } from './components/art'
 import { useT } from './lib/store'
 
 const Officer = lazy(() => import('./pages/Officer'))
-const Operator = lazy(() => import('./pages/Operator'))
+const Operator = lazy(() => import('./pages/operator/Operator'))
 const Engine = lazy(() => import('./pages/Engine'))
 const Dpr = lazy(() => import('./pages/Dpr'))
 
