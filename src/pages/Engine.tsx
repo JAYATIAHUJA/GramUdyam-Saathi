@@ -1,7 +1,7 @@
 import { clsx } from 'clsx'
 import { CheckCircle2, Play, ShieldAlert, ShieldCheck, XCircle } from 'lucide-react'
 import { useState } from 'react'
-import { TopNav } from './Landing'
+import { TopNav } from '../components/site'
 import { GOLDEN } from '../engine/golden'
 import { numericGuard } from '../engine/guard'
 import { naiveCeiling } from '../engine/router'
@@ -67,7 +67,7 @@ export default function Engine() {
                       <td className="px-4 py-3 font-bold">{g.id}</td>
                       <td className="px-3 py-3">{g.input}</td>
                       <td className="px-3 py-3 text-muted">{g.expected}</td>
-                      <td className="num px-3 py-3 text-[15px]">{r ? r.actual : <span className="text-muted">—</span>}</td>
+                      <td className="num px-3 py-3 text-[15px]">{r ? r.actual : <span className="text-muted">-</span>}</td>
                       <td className="px-3 py-3">
                         {r && (r.pass ? <CheckCircle2 className="size-5 text-go" aria-label="pass" /> : <XCircle className="size-5 text-risk" aria-label="fail" />)}
                         {r && <div className="text-[11px] text-muted">{r.ms.toFixed(1)} ms</div>}
@@ -124,7 +124,7 @@ export default function Engine() {
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-[13px] text-muted">{t('An admin changes a rate here (two-person approval) and every new plan picks it up — no redeploy. Each plan stores the rule ID it used.', 'एडमिन यहाँ दर बदलता है (दो लोगों की मंज़ूरी) और हर नई योजना उसे लेती है — बिना रीडिप्लॉय। हर योजना अपना नियम ID रखती है।')}</p>
+          <p className="mt-3 text-[13px] text-muted">{t('An admin changes a rate here (two-person approval) and every new plan picks it up, no redeploy. Each plan stores the rule ID it used.', 'एडमिन यहाँ दर बदलता है (दो लोगों की मंज़ूरी) और हर नई योजना उसे लेती है, बिना रीडिप्लॉय। हर योजना अपना नियम ID रखती है।')}</p>
         </section>
       </div>
     </div>
@@ -140,7 +140,7 @@ function RouterPlayground() {
   const s = r.rule ? buildSchedule(r.loan, r.rule.ratePa, r.rule.tenureQ, r.moratoriumQ, 'serviced') : null
   return (
     <section className="card p-5">
-      <h2 className="font-display text-[20px] font-bold">{t('Scheme router — try the edges', 'योजना राउटर — सीमाएँ आज़माएँ')}</h2>
+      <h2 className="font-display text-[20px] font-bold">{t('Scheme router, try the edges', 'योजना राउटर, सीमाएँ आज़माएँ')}</h2>
       <div className="mt-3 flex flex-wrap gap-2">
         {[10000, 14000, 14500, 100000, 600000].map((m) => (
           <button key={m} onClick={() => setMargin(m)} className={clsx('num rounded-lg border-2 px-2.5 py-1 text-[14px] font-bold', margin === m ? 'border-indigo bg-indigo-soft' : 'border-line')}>
@@ -208,7 +208,7 @@ function GuardPlayground() {
   const g = numericGuard(text, facts)
   return (
     <section className="card p-5">
-      <h2 className="font-display text-[20px] font-bold">{t('Numeric guard — try to sneak a number in', 'संख्या गार्ड — कोई संख्या घुसाकर देखें')}</h2>
+      <h2 className="font-display text-[20px] font-bold">{t('Numeric guard, try to sneak a number in', 'संख्या गार्ड, कोई संख्या घुसाकर देखें')}</h2>
       <p className="mt-1 text-[13.5px] text-muted">
         {t('Facts JSON for this plan', 'इस योजना के तथ्य')}: <span className="font-mono text-[12.5px]">[{facts.join(', ')}]</span>
       </p>
@@ -218,7 +218,7 @@ function GuardPlayground() {
           const bad = g.unknown.includes(n)
           return (
             <span key={i} className={clsx('rounded px-2 py-0.5 font-mono text-[12.5px] font-semibold', bad ? 'bg-risk-soft text-risk' : 'bg-go-soft text-go')}>
-              {n.toLocaleString('en-IN')} {bad ? '✗' : '✓'}
+              {n.toLocaleString('en-IN')} {bad ? <XCircle className="inline size-3.5" /> : <CheckCircle2 className="inline size-3.5" />}
             </span>
           )
         })}

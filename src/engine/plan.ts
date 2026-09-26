@@ -133,14 +133,14 @@ export function makePlan(input: PlanInput, opts: { id?: string; createdAt?: stri
   let verdict: Verdict = 'go'
   if (!recommended.route.eligible) {
     verdict = 'rethink'
-    reasons.push({ en: 'Not eligible for this corporation — see other schemes.', hi: 'इस निगम के लिए पात्र नहीं — दूसरी योजनाएँ देखें।' })
+    reasons.push({ en: 'Not eligible for this corporation, see other schemes.', hi: 'इस निगम के लिए पात्र नहीं, दूसरी योजनाएँ देखें।' })
   } else if (!recommended.passes) {
     verdict = minD < 1.2 || pD > THRESHOLDS.pDefaultRed ? 'rethink' : 'caution'
     reasons.push({ en: `Safest size found (${recommended.unit.size.label.en}) still has repayment cover ${minD.toFixed(2)} and a ${Math.round(pD * 100)}% chance of trouble.`, hi: `सबसे सुरक्षित आकार (${recommended.unit.size.label.hi}) में भी किस्त चुकाने की क्षमता ${minD.toFixed(2)} और ${Math.round(pD * 100)}% दिक़्क़त की संभावना।` })
   }
   if (fit.score < THRESHOLDS.founderFitLow) {
     if (verdict === 'go') verdict = 'caution'
-    reasons.push({ en: `Founder-Fit ${fit.score}/100 — training first will protect this loan.`, hi: `फ़ाउंडर-फ़िट ${fit.score}/100 — पहले प्रशिक्षण लें, लोन सुरक्षित रहेगा।` })
+    reasons.push({ en: `Founder-Fit ${fit.score}/100, training first will protect this loan.`, hi: `फ़ाउंडर-फ़िट ${fit.score}/100, पहले प्रशिक्षण लें, लोन सुरक्षित रहेगा।` })
   }
   if (feas.saturation.label === 'crowded' && !feas.demand.uncapped) {
     if (verdict === 'go') verdict = 'caution'
@@ -155,9 +155,9 @@ export function makePlan(input: PlanInput, opts: { id?: string; createdAt?: stri
   const topRisks: Plan['topRisks'] = []
   const order = { high: 0, medium: 1, low: 2 }
   const proj = recommended.projection
-  if (proj?.moneylenderMonth) topRisks.push({ level: 'high', en: `Cash runs out in month ${proj.moneylenderMonth} — keep a buffer or you'll need a moneylender.`, hi: `महीने ${proj.moneylenderMonth} में पैसा ख़त्म — बचत रखें वरना साहूकार के पास जाना पड़ेगा।` })
+  if (proj?.moneylenderMonth) topRisks.push({ level: 'high', en: `Money may run out in month ${proj.moneylenderMonth}. Keep some savings aside.`, hi: `महीने ${proj.moneylenderMonth} में पैसा ख़त्म हो सकता है। कुछ बचत अलग रखें।` })
   for (const t of [...feas.threats].sort((a, b) => order[a.level] - order[b.level])) topRisks.push({ level: t.level, en: t.en, hi: t.hi })
-  if (fit.score < 50) topRisks.splice(1, 0, { level: 'high', en: 'Low experience in this activity — the #1 reason NSFDC units struggle.', hi: 'इस काम का अनुभव कम — NSFDC इकाइयों के फ़ेल होने का सबसे बड़ा कारण।' })
+  if (fit.score < 50) topRisks.splice(1, 0, { level: 'high', en: 'You have little experience in this work. Get training first.', hi: 'इस काम का अनुभव कम है। पहले प्रशिक्षण लें।' })
 
   // SWOT from facts only
   const swot: Plan['swot'] = { S: [], W: [], O: [], T: [] }
@@ -176,7 +176,7 @@ export function makePlan(input: PlanInput, opts: { id?: string; createdAt?: stri
   if (input.category === 'SC') swot.O.push({ en: 'PMEGP 35% subsidy can be stacked for a later expansion.', hi: 'आगे बढ़ाने के लिए PMEGP 35% सब्सिडी मिल सकती है।' })
   for (const t of feas.threats.filter((x) => x.level !== 'low')) swot.T.push({ en: t.en, hi: t.hi, fact: t.id === 'T-input' ? 'F8' : undefined })
   if (recommended.marginShort > 0) swot.W.push({ en: `Margin short by ${rupee(recommended.marginShort)}.`, hi: `मार्जिन ${rupee(recommended.marginShort)} कम।` })
-  if (!swot.W.length) swot.W.push({ en: 'First business — no track record with banks.', hi: 'पहला व्यवसाय — बैंक के साथ कोई रिकॉर्ड नहीं।' })
+  if (!swot.W.length) swot.W.push({ en: 'First business, no track record with banks.', hi: 'पहला व्यवसाय, बैंक के साथ कोई रिकॉर्ड नहीं।' })
 
   // Alternatives: demand gap × fit × capital fit × (1 − risk)
   const altFit = founderFit({ ...input.fit, experience: 0 }, village.facilities.mandiKm)

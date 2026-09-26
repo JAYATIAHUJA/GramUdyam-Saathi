@@ -1,4 +1,4 @@
-// DEMO DATASET — Barabanki district (UP). Shapes follow Census 2011 PCA +
+// DEMO DATASET, Barabanki district (UP). Shapes follow Census 2011 PCA +
 // Mission Antyodaya 2020 fields; values are synthetic for the prototype.
 // x/y are km offsets from the district reference point (for the catchment map).
 
@@ -32,8 +32,8 @@ export const DISTRICT = {
   lgd: '146',
   growthFactor: 1.24, // 2011 → 2026 projection from district decadal growth
   sca: {
-    name: 'UP Scheduled Castes Finance & Development Corp. — District Office',
-    nameHi: 'उ.प्र. अनुसूचित जाति वित्त एवं विकास निगम — जिला कार्यालय',
+    name: 'UP Scheduled Castes Finance & Development Corp., District Office',
+    nameHi: 'उ.प्र. अनुसूचित जाति वित्त एवं विकास निगम, जिला कार्यालय',
     address: 'Vikas Bhawan, Barabanki 225001',
     phone: '05248-222XXX',
   },
@@ -111,3 +111,15 @@ export function searchVillages(q: string, limit = 3) {
 }
 
 export const villageByLgd = (lgd: string) => VILLAGES.find((v) => v.lgd === lgd)
+
+// Demo anchor: village x/y offsets are km east/north of this point (Sirauli, Dewa block).
+const ANCHOR = { lat: 26.935, lon: 81.19 }
+
+/** Villages ordered by distance from a GPS fix. `km` is straight-line distance. */
+export function nearestVillages(lat: number, lon: number, limit = 3) {
+  const x = (lon - ANCHOR.lon) * 111.32 * Math.cos((ANCHOR.lat * Math.PI) / 180)
+  const y = (lat - ANCHOR.lat) * 110.57
+  return VILLAGES.map((v) => ({ village: v, km: Math.hypot(v.x - x, v.y - y) }))
+    .sort((a, b) => a.km - b.km)
+    .slice(0, limit)
+}

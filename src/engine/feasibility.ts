@@ -134,10 +134,10 @@ export function assessFeasibility(village: Village, activity: Activity, userCoun
         ? { en: 'Milk collection centre in your own village buys all you produce.', hi: 'आपके अपने गाँव का दूध संग्रह केंद्र सारा दूध ख़रीदता है।' }
         : nearestMilk.km <= 5
         ? { en: `Milk collection centre at ${nearestMilk.v.name} (${nearestMilk.km.toFixed(1)} km) buys all you produce.`, hi: `${nearestMilk.v.nameHi} (${nearestMilk.km.toFixed(1)} किमी) का दूध संग्रह केंद्र सारा दूध ख़रीदता है।` }
-        : { en: `Nearest milk centre is ${nearestMilk.km.toFixed(1)} km away — you must sell locally.`, hi: `सबसे पास दूध केंद्र ${nearestMilk.km.toFixed(1)} किमी दूर — गाँव में ही बेचना होगा।` }
+        : { en: `Nearest milk centre is ${nearestMilk.km.toFixed(1)} km away, you must sell locally.`, hi: `सबसे पास दूध केंद्र ${nearestMilk.km.toFixed(1)} किमी दूर, गाँव में ही बेचना होगा।` }
       : a.channel === 'trader'
-        ? { en: 'Sold to traders / haat — not limited by village demand, but price moves.', hi: 'व्यापारी / हाट में बिक्री — गाँव की माँग की सीमा नहीं, पर दाम ऊपर-नीचे होते हैं।' }
-        : { en: 'Sold inside the 5 km catchment — village demand is the ceiling.', hi: '5 किमी के अंदर बिक्री — गाँव की माँग ही सीमा है।' }
+        ? { en: 'Sold to traders / haat, not limited by village demand, but price moves.', hi: 'व्यापारी / हाट में बिक्री, गाँव की माँग की सीमा नहीं, पर दाम ऊपर-नीचे होते हैं।' }
+        : { en: 'Sold inside the 5 km catchment, village demand is the ceiling.', hi: '5 किमी के अंदर बिक्री, गाँव की माँग ही सीमा है।' }
 
   const idx = a.seasonality
   const lean = idx.map((x, i) => [x, i] as const).filter(([x]) => x < 0.9).map(([, i]) => i)
@@ -151,32 +151,32 @@ export function assessFeasibility(village: Village, activity: Activity, userCoun
   threats.push({
     id: 'T-season',
     level: amplitude > 0.8 ? 'high' : amplitude > 0.35 ? 'medium' : 'low',
-    en: `Seasonality: sales swing ${Math.round(amplitude * 100)}% between best and worst month.`,
-    hi: `मौसम: सबसे अच्छे और सबसे ख़राब महीने में ${Math.round(amplitude * 100)}% का फ़र्क।`,
+    en: `Some months sell less (up to ${Math.round(amplitude * 100)}% difference). Save in the good months.`,
+    hi: `कुछ महीनों में बिक्री कम होती है (${Math.round(amplitude * 100)}% तक फ़र्क)। अच्छे महीनों में बचत करें।`,
   })
   const inputKm = village.facilities.mandiKm
   threats.push({
     id: 'T-input',
     level: inputKm > 17 ? 'high' : inputKm > 12 ? 'medium' : 'low',
-    en: `Inputs and mandi are ${inputKm} km away.`,
-    hi: `कच्चा माल और मंडी ${inputKm} किमी दूर।`,
+    en: `The mandi is ${inputKm} km away. Count the travel cost.`,
+    hi: `मंडी ${inputKm} किमी दूर है। आने-जाने का ख़र्च जोड़कर चलें।`,
   })
   if (a.channel === 'milkCentre' || a.code === 'poultry') {
     threats.push({
       id: 'T-buyer',
       level: 'medium',
-      en: 'Single-buyer dependency: one collection centre / integrator sets the price.',
-      hi: 'एक ही ख़रीदार पर निर्भरता: एक केंद्र / कंपनी दाम तय करती है।',
+      en: 'Only one buyer (milk centre or company) decides your price.',
+      hi: 'दाम एक ही ख़रीदार (दूध केंद्र या कंपनी) तय करता है।',
     })
   }
   threats.push({
     id: 'T-flood',
     level: village.floodRisk,
-    en: `Flood / waterlogging risk: ${village.floodRisk} (Ghaghra basin).`,
-    hi: `बाढ़ / जलभराव का ख़तरा: ${village.floodRisk === 'high' ? 'ज़्यादा' : village.floodRisk === 'medium' ? 'मध्यम' : 'कम'} (घाघरा क्षेत्र)।`,
+    en: `Chance of flood or waterlogging: ${village.floodRisk}.`,
+    hi: `बाढ़ या पानी भरने का ख़तरा: ${village.floodRisk === 'high' ? 'ज़्यादा' : village.floodRisk === 'medium' ? 'मध्यम' : 'कम'}।`,
   })
   if (satLabel === 'crowded')
-    threats.push({ id: 'T-crowd', level: 'high', en: `${Math.round(mid)} similar units already within 5 km.`, hi: `5 किमी में पहले से ${Math.round(mid)} ऐसी इकाइयाँ।` })
+    threats.push({ id: 'T-crowd', level: 'high', en: `${Math.round(mid)} similar businesses are already within 5 km.`, hi: `5 किमी में पहले से ${Math.round(mid)} ऐसे काम चल रहे हैं।` })
 
   const rupee = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN')
   const facts: Fact[] = [

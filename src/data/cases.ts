@@ -1,5 +1,5 @@
 // DEMO applicant queue for the SCA officer dashboard and VLE operator mode.
-// Every case is a real engine run over these inputs — nothing on the dashboard is typed in by hand.
+// Every case is a real engine run over these inputs, nothing on the dashboard is typed in by hand.
 import type { SavedCase } from '../lib/store'
 import type { PlanInput } from '../engine/plan'
 

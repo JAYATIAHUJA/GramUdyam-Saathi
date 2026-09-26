@@ -17,5 +17,5 @@ export const pct = (x: number, d = 0) => `${(x * 100).toFixed(d)}%`
 export const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 export const MONTHS_HI = ['जन', 'फ़र', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सितं', 'अक्टू', 'नवं', 'दिसं']
 
-/** DSCR for display: no debt service → '—'. */
-export const dscr = (n: number | undefined | null) => (n == null || !Number.isFinite(n) ? '—' : n.toFixed(2))
+/** DSCR for display: no debt service → '-'. */
+export const dscr = (n: number | undefined | null) => (n == null || !Number.isFinite(n) ? '-' : n.toFixed(2))

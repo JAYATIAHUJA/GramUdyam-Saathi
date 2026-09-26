@@ -74,7 +74,7 @@ export default function Dpr() {
             ['Project cost', 'परियोजना लागत', lakh(r.projectCost)],
             ['Loan', 'ऋण', lakh(r.loan)],
             ['Own contribution', 'स्वयं का अंशदान', lakh(r.contribution)],
-            ['Quarterly instalment', 'तिमाही किस्त', s ? inr(s.instalment) : '—'],
+            ['Quarterly instalment', 'तिमाही किस्त', s ? inr(s.instalment) : '-'],
           ].map(([e, h, val]) => (
             <div key={e} className="rounded-lg bg-indigo-soft/60 p-2.5">
               <div className="num text-[20px] font-bold">{val}</div>
@@ -159,7 +159,7 @@ export default function Dpr() {
                 <tr className="text-right font-bold">
                   <td className="py-1 text-left font-sans">DSCR</td>
                   {pj.years.slice(0, 5).map((y) => (
-                    <td key={y.year}>{Number.isFinite(y.dscr) ? y.dscr.toFixed(2) : '—'}</td>
+                    <td key={y.year}>{Number.isFinite(y.dscr) ? y.dscr.toFixed(2) : '-'}</td>
                   ))}
                 </tr>
               </tbody>
@@ -233,7 +233,7 @@ export default function Dpr() {
         </ul>
 
         <footer className="mt-8 border-t border-line pt-3 text-[11px] text-muted">
-          Prepared by GramUdyam Saathi on {today}. Figures computed by deterministic engine {plan.ruleVersion} on data {plan.dataVersion}; narrative text passed the numeric guard. Demo data — verify with {DISTRICT.sca.name}.
+          Prepared by GramUdyam Saathi on {today}. Figures computed by deterministic engine {plan.ruleVersion} on data {plan.dataVersion}; narrative text passed the numeric guard. Demo data, verify with {DISTRICT.sca.name}.
         </footer>
       </article>
     </div>

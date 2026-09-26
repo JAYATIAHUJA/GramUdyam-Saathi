@@ -106,7 +106,7 @@ export const RULES: SchemeRule[] = [
     source: 'nbcfdc.gov.in/faq',
     effectiveFrom: '2026-01-01',
     confidence: 'verify',
-    note: '85% financing share — beneficiary contributes 15%, not 10%.',
+    note: '85% financing share, beneficiary contributes 15%, not 10%.',
   },
   {
     id: 'nskfdc_mcf_v2026_1',

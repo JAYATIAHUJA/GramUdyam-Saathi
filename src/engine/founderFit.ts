@@ -1,5 +1,5 @@
 // Founder-Fit: transparent weighted score. Weights follow the MoSJE NSFDC
-// evaluation — 61.5% cited lack of expertise/interest, 69.9% had no prior skill.
+// evaluation, 61.5% cited lack of expertise/interest, 69.9% had no prior skill.
 
 export interface FitAnswers {
   experience: 0 | 1 | 2 // none, <2 yrs, 2+ yrs in this activity
