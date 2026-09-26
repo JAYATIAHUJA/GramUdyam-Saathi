@@ -18,7 +18,6 @@ export type Channel = 'milkCentre' | 'local' | 'trader'
 export interface Activity {
   code: string
   name: { en: string; hi: string }
-  emoji: string
   sector: { en: string; hi: string }
   sizes: ActivitySize[]
   seasonality: number[] // Jan..Dec index, mean ≈ 1
@@ -40,7 +39,6 @@ export const ACTIVITIES: Activity[] = [
   {
     code: 'dairy',
     name: L('Dairy (cows)', 'डेयरी (गाय)'),
-    emoji: '🐄',
     sector: L('Animal husbandry', 'पशुपालन'),
     sizes: [
       { id: 'dairy-2', label: L('2 cows', '2 गाय'), capex: 190000, workingCapital: 20000, capacityRevenue: 16400, variableCostPct: 0.55, fixedMonthly: 800, labourNeeded: 1, depYears: 10 },
@@ -56,13 +54,12 @@ export const ACTIVITIES: Activity[] = [
     competitorsPer1000Median: 2.0,
     channels: [L('Milk collection centre (Parag / co-op)', 'दूध संग्रह केंद्र (पराग / सहकारी)'), L('Direct to households', 'सीधे घरों में'), L('Sweet shops in Dewa', 'देवा की मिठाई दुकानें')],
     localUnit: { en: 'litres of milk', hi: 'लीटर दूध', price: 38 },
-    training: L('RSETI Barabanki — 10-day dairy course', 'RSETI बाराबंकी — 10 दिन डेयरी कोर्स'),
+    training: L('RSETI Barabanki, 10-day dairy course', 'RSETI बाराबंकी, 10 दिन डेयरी कोर्स'),
     risks: [L('Lean milk months Apr–Jun', 'अप्रैल–जून में दूध कम'), L('Animal disease (LSD, FMD)', 'पशु रोग (LSD, खुरपका)'), L('Fodder price spikes', 'चारे के दाम बढ़ना')],
   },
   {
     code: 'goat',
     name: L('Goat rearing', 'बकरी पालन'),
-    emoji: '🐐',
     sector: L('Animal husbandry', 'पशुपालन'),
     sizes: [
       { id: 'goat-10', label: L('10 goats + 1 buck', '10 बकरी + 1 बकरा'), capex: 110000, workingCapital: 10000, capacityRevenue: 9800, variableCostPct: 0.3, fixedMonthly: 300, labourNeeded: 1, depYears: 6 },
@@ -83,7 +80,6 @@ export const ACTIVITIES: Activity[] = [
   {
     code: 'kirana',
     name: L('Kirana shop', 'किराना दुकान'),
-    emoji: '🏪',
     sector: L('Retail', 'खुदरा'),
     sizes: [
       { id: 'kirana-s', label: L('Small counter', 'छोटी दुकान'), capex: 35000, workingCapital: 85000, capacityRevenue: 78000, variableCostPct: 0.88, fixedMonthly: 1200, labourNeeded: 1, depYears: 8 },
@@ -103,7 +99,6 @@ export const ACTIVITIES: Activity[] = [
   {
     code: 'tailoring',
     name: L('Tailoring', 'सिलाई'),
-    emoji: '🧵',
     sector: L('Service', 'सेवा'),
     sizes: [
       { id: 'tailor-1', label: L('1 motorised machine', '1 मोटर मशीन'), capex: 42000, workingCapital: 18000, capacityRevenue: 13500, variableCostPct: 0.28, fixedMonthly: 500, labourNeeded: 1, depYears: 7 },
@@ -124,7 +119,6 @@ export const ACTIVITIES: Activity[] = [
   {
     code: 'mobile',
     name: L('Mobile repair', 'मोबाइल रिपेयर'),
-    emoji: '📱',
     sector: L('Service', 'सेवा'),
     sizes: [
       { id: 'mobile-s', label: L('Repair counter', 'रिपेयर काउंटर'), capex: 45000, workingCapital: 35000, capacityRevenue: 19000, variableCostPct: 0.4, fixedMonthly: 1500, labourNeeded: 1, depYears: 5 },
@@ -139,12 +133,11 @@ export const ACTIVITIES: Activity[] = [
     channels: [L('Walk-in, near bank / bus stop', 'बैंक / बस स्टॉप के पास'), L('Weekly haat stall', 'हाट पर स्टॉल')],
     localUnit: { en: 'repairs', hi: 'रिपेयर', price: 450 },
     training: L('RSETI mobile repairing (30 days)', 'RSETI मोबाइल रिपेयरिंग (30 दिन)'),
-    risks: [L('Needs real skill — cannot learn on the job', 'हुनर ज़रूरी — काम करते-करते नहीं सीख सकते'), L('Spare parts only in Dewa / Lucknow', 'पुर्ज़े सिर्फ़ देवा / लखनऊ में')],
+    risks: [L('Needs real skill, cannot learn on the job', 'हुनर ज़रूरी, काम करते-करते नहीं सीख सकते'), L('Spare parts only in Dewa / Lucknow', 'पुर्ज़े सिर्फ़ देवा / लखनऊ में')],
   },
   {
     code: 'tea',
     name: L('Tea & snacks stall', 'चाय-नाश्ता स्टॉल'),
-    emoji: '☕',
     sector: L('Food', 'खाद्य'),
     sizes: [
       { id: 'tea-s', label: L('Tea stall', 'चाय की दुकान'), capex: 30000, workingCapital: 15000, capacityRevenue: 26000, variableCostPct: 0.6, fixedMonthly: 800, labourNeeded: 1, depYears: 5 },
@@ -164,7 +157,6 @@ export const ACTIVITIES: Activity[] = [
   {
     code: 'chakki',
     name: L('Atta chakki (flour mill)', 'आटा चक्की'),
-    emoji: '🌾',
     sector: L('Agro-processing', 'कृषि प्रसंस्करण'),
     sizes: [
       { id: 'chakki-1', label: L('Chakki (10 HP)', 'चक्की (10 HP)'), capex: 210000, workingCapital: 20000, capacityRevenue: 26000, variableCostPct: 0.38, fixedMonthly: 1800, labourNeeded: 1, depYears: 10 },
@@ -184,7 +176,6 @@ export const ACTIVITIES: Activity[] = [
   {
     code: 'poultry',
     name: L('Poultry (broiler)', 'मुर्गी पालन (ब्रॉयलर)'),
-    emoji: '🐔',
     sector: L('Animal husbandry', 'पशुपालन'),
     sizes: [
       { id: 'poultry-500', label: L('500 birds / batch', '500 मुर्गी / बैच'), capex: 150000, workingCapital: 70000, capacityRevenue: 41000, variableCostPct: 0.8, fixedMonthly: 1000, labourNeeded: 1, depYears: 8 },
@@ -204,7 +195,6 @@ export const ACTIVITIES: Activity[] = [
   {
     code: 'nursery',
     name: L('Fruit nursery (plantation)', 'फल नर्सरी (पौधारोपण)'),
-    emoji: '🌱',
     sector: L('Horticulture', 'बागवानी'),
     plantation: true,
     sizes: [
