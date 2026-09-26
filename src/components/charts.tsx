@@ -21,7 +21,7 @@ export function CashRunway({ p }: { p: Projection }) {
   const max = Math.max(...data.map((d) => d.cash))
   const zeroAt = max === min ? 0 : max / (max - min)
   return (
-    <ResponsiveContainer width="100%" height={190}>
+    <ResponsiveContainer width="100%" height={150}>
       <AreaChart data={data} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
         <defs>
           <linearGradient id="cashfill" x1="0" y1="0" x2="0" y2="1">
@@ -63,7 +63,7 @@ export function DscrBars({ p, loanYears }: { p: Projection; loanYears: number })
   const t = useT()
   const data = p.years.filter((y) => y.year <= loanYears).map((y) => ({ name: t(`Yr ${y.year}`, `वर्ष ${y.year}`), dscr: Math.min(y.dscr, 6), raw: y }))
   return (
-    <ResponsiveContainer width="100%" height={170}>
+    <ResponsiveContainer width="100%" height={140}>
       <BarChart data={data} margin={{ top: 12, right: 8, left: -18, bottom: 0 }} barCategoryGap="28%">
         <CartesianGrid stroke={GRID} vertical={false} />
         <XAxis dataKey="name" tick={AXIS} tickLine={false} axisLine={false} />
@@ -97,7 +97,7 @@ export function McHistogram({ mc }: { mc: MonteCarlo }) {
   const t = useT()
   const data = mc.histogram.map((b) => ({ ...b, name: b.bin.toFixed(2) }))
   return (
-    <ResponsiveContainer width="100%" height={150}>
+    <ResponsiveContainer width="100%" height={130}>
       <BarChart data={data} margin={{ top: 8, right: 8, left: -24, bottom: 0 }} barCategoryGap={2}>
         <XAxis dataKey="bin" tick={AXIS} tickLine={false} axisLine={false} tickFormatter={(v) => (v % 1 === 0 ? String(v) : '')} />
         <YAxis tick={AXIS} tickLine={false} axisLine={false} />
@@ -129,7 +129,7 @@ export function SeasonBars({ idx, lean }: { idx: number[]; lean: number[] }) {
   const t = useT()
   const data = idx.map((v, i) => ({ v, name: t(MONTHS_EN[i], MONTHS_HI[i]).slice(0, 3), lean: lean.includes(i) }))
   return (
-    <ResponsiveContainer width="100%" height={130}>
+    <ResponsiveContainer width="100%" height={115}>
       <BarChart data={data} margin={{ top: 8, right: 4, left: -30, bottom: 0 }} barCategoryGap="18%">
         <XAxis dataKey="name" tick={{ ...AXIS, fontSize: 10 }} tickLine={false} axisLine={false} interval={0} />
         <YAxis tick={AXIS} tickLine={false} axisLine={false} domain={[0, 'dataMax']} hide />
@@ -154,7 +154,7 @@ export function SeasonBars({ idx, lean }: { idx: number[]; lean: number[] }) {
   )
 }
 
-/** Two-bar comparison drawn in plain HTML — expected sales vs break-even. */
+/** Two-bar comparison drawn in plain HTML, expected sales vs break-even. */
 export function DemandVsBreakeven({ expected, breakeven }: { expected: number; breakeven: number }) {
   const t = useT()
   const max = Math.max(expected, breakeven) * 1.1
