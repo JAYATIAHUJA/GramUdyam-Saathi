@@ -68,7 +68,7 @@ export const GOLDEN: GoldenCase[] = [
     run: () => {
       const r = naiveCeiling(14500, 'SC', 150000)
       const alt = r.alternatives[0]
-      return { actual: `${r.rule!.product} ${inr(r.projectCost)} vs ${alt?.rule.product} ${alt ? inr(alt.projectCost) : '—'}`, pass: r.rule!.product === 'Term Loan' && r.projectCost === 145000 && alt?.rule.product === 'Micro Finance' && alt.loan === 125000 }
+      return { actual: `${r.rule!.product} ${inr(r.projectCost)} vs ${alt?.rule.product} ${alt ? inr(alt.projectCost) : '-'}`, pass: r.rule!.product === 'Term Loan' && r.projectCost === 145000 && alt?.rule.product === 'Micro Finance' && alt.loan === 125000 }
     },
   },
   {

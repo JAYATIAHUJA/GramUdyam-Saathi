@@ -35,17 +35,17 @@ export function narrate(p: Plan, lang: Lang): { text: string; guard: ReturnType<
     const verdictLine = p.verdict === 'go' ? 'अच्छा मौका है।' : p.verdict === 'caution' ? 'सोच-समझ कर कदम उठाइए।' : 'दोबारा सोचिए।'
     text =
       `${p.input.name} जी, ${act.name.hi} के लिए ${verdictLine} ` +
-      (smaller ? `${inr(p.chosen.loan)} की जगह ${inr(r.loan)} का लोन लीजिए — ${r.unit.size.label.hi} से शुरू करें। ` : `${inr(r.loan)} का लोन ठीक रहेगा। `) +
+      (smaller ? `${inr(p.chosen.loan)} की जगह ${inr(r.loan)} का लोन लीजिए, ${r.unit.size.label.hi} से शुरू करें। ` : `${inr(r.loan)} का लोन ठीक रहेगा। `) +
       `पहले ${mor} महीने सिर्फ़ ब्याज, फिर हर तीन महीने ${inr(inst)}। ` +
-      `यानी रोज़ क़रीब ${inr(perDay)} — लगभग ${units} ${act.localUnit.hi} रोज़। ` +
+      `यानी रोज़ क़रीब ${inr(perDay)}, लगभग ${units} ${act.localUnit.hi} रोज़। ` +
       (p.fit.score < 50 ? `पहले ${act.training.hi} कर लीजिए।` : `किस्त हर महीने ${inr(inst / 3)} अलग रखिए।`)
   } else {
     const verdictLine = p.verdict === 'go' ? 'this is a good opportunity.' : p.verdict === 'caution' ? 'go ahead carefully.' : 'please rethink this plan.'
     text =
       `${p.input.name}, for ${act.name.en.toLowerCase()} ${verdictLine} ` +
-      (smaller ? `Borrow ${inr(r.loan)}, not ${inr(p.chosen.loan)} — start with ${r.unit.size.label.en}. ` : `A loan of ${inr(r.loan)} is right-sized. `) +
+      (smaller ? `Borrow ${inr(r.loan)}, not ${inr(p.chosen.loan)}, start with ${r.unit.size.label.en}. ` : `A loan of ${inr(r.loan)} is right-sized. `) +
       `For the first ${mor} months you pay only interest, then ${inr(inst)} every three months. ` +
-      `That is about ${inr(perDay)} a day — roughly ${units} ${act.localUnit.en} a day. ` +
+      `That is about ${inr(perDay)} a day, roughly ${units} ${act.localUnit.en} a day. ` +
       (p.fit.score < 50 ? `Do the ${act.training.en} first.` : `Set aside ${inr(inst / 3)} every month.`)
   }
   const facts = [...planNumbers(p), mor, units, perDay, Math.round(inst / 3), r.loan, p.chosen.loan, Math.round(inst)]

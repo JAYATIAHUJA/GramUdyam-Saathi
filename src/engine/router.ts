@@ -107,12 +107,12 @@ export function route(input: {
     flags.push({
       code: 'MARGIN_SHORT',
       severity: 'warn',
-      en: `You have ${fmt(margin)}; this plan needs ${fmt(contribution)} from you — ${fmt(contribution - margin)} short.`,
-      hi: `आपके पास ${fmt(margin)} हैं; इस योजना में आपका हिस्सा ${fmt(contribution)} — ${fmt(contribution - margin)} कम।`,
+      en: `You have ${fmt(margin)}; this plan needs ${fmt(contribution)} from you, ${fmt(contribution - margin)} short.`,
+      hi: `आपके पास ${fmt(margin)} हैं; इस योजना में आपका हिस्सा ${fmt(contribution)}, ${fmt(contribution - margin)} कम।`,
     })
   }
 
-  // A3: near a product boundary — show neighbouring product side by side.
+  // A3: near a product boundary, show neighbouring product side by side.
   const alternatives: RouteResult['alternatives'] = []
   for (const other of rs) {
     if (other.id === rule.id) continue
