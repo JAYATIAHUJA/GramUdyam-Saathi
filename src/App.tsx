@@ -7,7 +7,7 @@ import PlanPage from './pages/PlanPage'
 import { Didi } from './components/art'
 import { useT } from './lib/store'
 
-const Officer = lazy(() => import('./pages/Officer'))
+const Officer = lazy(() => import('./pages/officer/Officer'))
 const Operator = lazy(() => import('./pages/operator/Operator'))
 const Engine = lazy(() => import('./pages/Engine'))
 const Dpr = lazy(() => import('./pages/Dpr'))
