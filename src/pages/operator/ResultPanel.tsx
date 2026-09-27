@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import { CalendarClock, ChevronDown, Printer, Send, Wallet } from 'lucide-react'
+import { CalendarClock, ChevronDown, Circle, ClipboardList, Printer, Send, Wallet } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { ActivityArt } from '../../components/art'
 import { VerdictStamp } from '../../components/ui'
@@ -9,16 +9,40 @@ import { dscr, inr, lakh, pct } from '../../lib/format'
 import { useT } from '../../lib/store'
 
 /** Live result beside the form, with print and send actions. */
-export function ResultPanel({ plan, activity, onPrint, onSend }: { plan: Plan; activity: string; onPrint: () => void; onSend: () => void }) {
+export function ResultPanel({ plan, activity, missing, onPrint, onSend }: { plan: Plan; activity: string; missing: { key: string; en: string; hi: string }[]; onPrint: () => void; onSend: () => void }) {
   const t = useT()
   const r = plan.recommended
   const a = activityByCode(activity)
+  const ready = missing.length === 0
   return (
     <aside className="card flex flex-col lg:min-h-0">
       <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-3">
         <span className="font-display text-[18px] font-bold">{t('Result', 'नतीजा')}</span>
-        <span className="text-[12px] font-semibold text-muted">{t('updates live', 'साथ-साथ बदलता है')}</span>
+        {ready && <span className="text-[12px] font-semibold text-muted">{t('updates live', 'साथ-साथ बदलता है')}</span>}
       </div>
+      {!ready ? (
+        <div className="flex-1 px-4 py-4 lg:min-h-0 lg:overflow-y-auto">
+          <div className="grid place-items-center rounded-2xl border border-dashed border-line bg-khadi/40 px-4 py-6 text-center">
+            <span className="grid size-11 place-items-center rounded-full bg-indigo-soft text-indigo">
+              <ClipboardList className="size-5" />
+            </span>
+            <p className="mt-2 font-display text-[16px] font-bold text-indigo-deep">{t('Result appears here', 'नतीजा यहाँ दिखेगा')}</p>
+            <p className="mt-0.5 text-[12.5px] text-muted">{t('Fill the form with the applicant first.', 'पहले आवेदक के साथ फ़ॉर्म भरें।')}</p>
+          </div>
+          <div className="mt-4 flex items-center justify-between text-[12.5px] font-bold text-muted">
+            <span>{t('Still to fill', 'अभी भरना है')}</span>
+            <span className="num">{t(`${missing.length} left`, `${missing.length} बाक़ी`)}</span>
+          </div>
+          <ul className="mt-1.5 space-y-1">
+            {missing.map((m) => (
+              <li key={m.key} className="flex items-center gap-2 rounded-lg px-2 py-1 text-[13px] text-ink/80">
+                <Circle className="size-3.5 text-line" />
+                {t(m.en, m.hi)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
       <div className="flex-1 px-4 py-3 lg:min-h-0 lg:overflow-y-auto">
         <div className="flex items-center gap-3">
           <ActivityArt code={a.code} className="size-12" />
@@ -68,16 +92,19 @@ export function ResultPanel({ plan, activity, onPrint, onSend }: { plan: Plan; a
           ))}
         </ul>
       </div>
+      )}
       <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-line p-3">
         <button
           onClick={onPrint}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl border-2 border-line bg-white px-3 py-2.5 text-[14px] font-bold hover:border-indigo/40"
+          disabled={!ready}
+          className="inline-flex items-center justify-center gap-1.5 rounded-xl border-2 border-line bg-white px-3 py-2.5 text-[14px] font-bold hover:border-indigo/40 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-line"
         >
           <Printer className="size-4" /> {t('Print report', 'रिपोर्ट प्रिंट')}
         </button>
         <button
           onClick={onSend}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-go px-3 py-2.5 text-[14px] font-bold text-white hover:brightness-110"
+          disabled={!ready}
+          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-go px-3 py-2.5 text-[14px] font-bold text-white hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:brightness-100"
         >
           <Send className="size-4" /> {t('Send to SCA', 'SCA को भेजें')}
         </button>

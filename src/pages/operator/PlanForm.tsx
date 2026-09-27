@@ -7,12 +7,14 @@ import type { PlanInput } from '../../engine/plan'
 import { lakh } from '../../lib/format'
 import { useT } from '../../lib/store'
 import { F, Group, Rupee, Seg } from './fields'
-import { SetFit, SetInput } from './types'
+import { type FieldKey, SetFit, SetInput } from './types'
 
 /** The three-part form a helper fills with the applicant. */
-export function PlanForm({ inp, set, setFit, editing, elapsed }: { inp: PlanInput; set: SetInput; setFit: SetFit; editing: string | null; elapsed: number }) {
+export function PlanForm({ inp, filled, set, setFit, editing, elapsed }: { inp: PlanInput; filled: Set<FieldKey>; set: SetInput; setFit: SetFit; editing: string | null; elapsed: number }) {
   const t = useT()
   const a = activityByCode(inp.activity)
+  const has = (k: FieldKey) => filled.has(k)
+  const fit = <K extends keyof PlanInput['fit']>(k: K & FieldKey) => (has(k) ? inp.fit[k] : undefined)
   return (
     <main className="card flex flex-col lg:min-h-0">
       <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-5 py-3">
@@ -34,7 +36,10 @@ export function PlanForm({ inp, set, setFit, editing, elapsed }: { inp: PlanInpu
             <input value={inp.name} onChange={(e) => set({ name: e.target.value })} className="inp h-11" placeholder={t('e.g. Kamla Devi', 'जैसे कमला देवी')} autoFocus />
           </F>
           <F label={t('Village', 'गाँव')}>
-            <select value={inp.lgd} onChange={(e) => set({ lgd: e.target.value })} className="inp h-11">
+            <select value={has('lgd') ? inp.lgd : ''} onChange={(e) => set({ lgd: e.target.value })} className={clsx('inp h-11', !has('lgd') && 'text-muted/70')}>
+              <option value="" disabled>
+                {t('Pick village', 'गाँव चुनें')}
+              </option>
               {VILLAGES.map((v) => (
                 <option key={v.lgd} value={v.lgd}>
                   {t(v.name, v.nameHi)}, {t(v.block, v.blockHi)}
@@ -44,7 +49,7 @@ export function PlanForm({ inp, set, setFit, editing, elapsed }: { inp: PlanInpu
           </F>
           <F label={t('Social group', 'वर्ग')} hint={t('Decides which lender', 'इससे लोन देने वाला निगम तय होता है')}>
             <Seg
-              value={inp.category}
+              value={has('category') ? inp.category : undefined}
               onChange={(v) => set({ category: v as PlanInput['category'] })}
               opts={[
                 ['SC', 'SC'],
@@ -54,21 +59,21 @@ export function PlanForm({ inp, set, setFit, editing, elapsed }: { inp: PlanInpu
             />
           </F>
           <F label={t('Family income / year', 'परिवार की सालाना आय')}>
-            <Rupee value={inp.familyIncome} onChange={(n) => set({ familyIncome: n })} step={10000} />
+            <Rupee value={inp.familyIncome} blank={!has('familyIncome')} placeholder={t('e.g. 150000', 'जैसे 150000')} onChange={(n) => set({ familyIncome: n })} step={10000} />
           </F>
         </Group>
 
         <Group n={2} title={t('Business', 'काम')} hint={t('Pick one', 'एक चुनें')}>
           <div className="grid grid-cols-3 gap-2 sm:col-span-2 sm:grid-cols-5 xl:col-span-3 xl:grid-cols-9">
             {ACTIVITIES.map((x) => (
-              <button key={x.code} type="button" onClick={() => set({ activity: x.code, sizeId: null })} aria-pressed={inp.activity === x.code} className={clsx('flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-center transition-colors', inp.activity === x.code ? 'border-indigo bg-indigo-soft ring-1 ring-indigo/40' : 'border-line bg-white hover:border-indigo/40')}>
+              <button key={x.code} type="button" onClick={() => set({ activity: x.code, sizeId: null })} aria-pressed={has('activity') && inp.activity === x.code} className={clsx('flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-center transition-colors', has('activity') && inp.activity === x.code ? 'border-indigo bg-indigo-soft ring-1 ring-indigo/40' : 'border-line bg-white hover:border-indigo/40')}>
                 <ActivityArt code={x.code} className="size-9" />
                 <span className="line-clamp-1 text-[11.5px] leading-tight font-semibold">{t(x.name.en, x.name.hi).split(' (')[0]}</span>
               </button>
             ))}
           </div>
           <F label={t('Size', 'आकार')}>
-            <select value={inp.sizeId ?? ''} onChange={(e) => set({ sizeId: e.target.value || null })} className="inp h-11">
+            <select value={inp.sizeId ?? ''} onChange={(e) => set({ sizeId: e.target.value || null })} disabled={!has('activity')} className="inp h-11 disabled:cursor-not-allowed disabled:bg-khadi/50 disabled:text-muted">
               <option value="">{t('Let Saathi pick', 'साथी तय करे')}</option>
               {a.sizes.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -78,7 +83,7 @@ export function PlanForm({ inp, set, setFit, editing, elapsed }: { inp: PlanInpu
             </select>
           </F>
           <F label={t('Own savings', 'अपनी बचत')} hint={t('Margin money they put in', 'आवेदक की तरफ़ से लगाई रकम')}>
-            <Rupee value={inp.margin} onChange={(n) => set({ margin: n })} step={1000} />
+            <Rupee value={inp.margin} blank={!has('margin')} placeholder={t('e.g. 50000', 'जैसे 50000')} onChange={(n) => set({ margin: n })} step={1000} />
           </F>
           <F label={t('Early interest', 'शुरुआती ब्याज')} hint={t('During the first months', 'शुरू के महीनों में')}>
             <Seg
@@ -94,19 +99,19 @@ export function PlanForm({ inp, set, setFit, editing, elapsed }: { inp: PlanInpu
 
         <Group n={3} title={t('Right fit?', 'सही काम?')} hint={t('Is this work right for them', 'क्या यह काम इनके लिए सही है')}>
           <F label={t('Experience', 'अनुभव')}>
-            <Seg value={inp.fit.experience} onChange={(v) => setFit({ experience: v as 0 | 1 | 2 })} opts={[[0, t('None', 'नहीं')], [1, t('< 2 yrs', '< 2 साल')], [2, t('2+ yrs', '2+ साल')]]} />
+            <Seg value={fit('experience')} onChange={(v) => setFit({ experience: v as 0 | 1 | 2 })} opts={[[0, t('None', 'नहीं')], [1, t('< 2 yrs', '< 2 साल')], [2, t('2+ yrs', '2+ साल')]]} />
           </F>
           <F label={t('Family help', 'घर से मदद')}>
-            <Seg value={inp.fit.familyLabour} onChange={(v) => setFit({ familyLabour: v as 0 | 1 | 2 })} opts={[[0, t('None', 'कोई नहीं')], [1, '1'], [2, '2+']]} />
+            <Seg value={fit('familyLabour')} onChange={(v) => setFit({ familyLabour: v as 0 | 1 | 2 })} opts={[[0, t('None', 'कोई नहीं')], [1, '1'], [2, '2+']]} />
           </F>
           <F label={t('Hours a day', 'रोज़ घंटे')}>
-            <Seg value={inp.fit.hours} onChange={(v) => setFit({ hours: v as 0 | 1 | 2 })} opts={[[0, '< 4'], [1, '4–8'], [2, t('Full day', 'पूरा दिन')]]} />
+            <Seg value={fit('hours')} onChange={(v) => setFit({ hours: v as 0 | 1 | 2 })} opts={[[0, '< 4'], [1, '4–8'], [2, t('Full day', 'पूरा दिन')]]} />
           </F>
           <F label={t('Training', 'प्रशिक्षण')}>
-            <Seg value={inp.fit.training} onChange={(v) => setFit({ training: v as 0 | 1 })} opts={[[0, t('No', 'नहीं')], [1, t('Yes', 'हाँ')]]} />
+            <Seg value={fit('training')} onChange={(v) => setFit({ training: v as 0 | 1 })} opts={[[0, t('No', 'नहीं')], [1, t('Yes', 'हाँ')]]} />
           </F>
           <F label={t('Interest in this work', 'काम में रुचि')} hint={t('1 = low, 5 = high', '1 = कम, 5 = ज़्यादा')} wide>
-            <Seg value={inp.fit.interest} onChange={(v) => setFit({ interest: v as 1 | 2 | 3 | 4 | 5 })} opts={[[1, '1'], [2, '2'], [3, '3'], [4, '4'], [5, '5']]} />
+            <Seg value={fit('interest')} onChange={(v) => setFit({ interest: v as 1 | 2 | 3 | 4 | 5 })} opts={[[1, '1'], [2, '2'], [3, '3'], [4, '4'], [5, '5']]} />
           </F>
         </Group>
       </div>

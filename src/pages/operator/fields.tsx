@@ -29,16 +29,18 @@ export function F({ label, hint, children, wide }: { label: string; hint?: strin
   )
 }
 
-export function Rupee({ value, onChange, step }: { value: number; onChange: (n: number) => void; step: number }) {
+/** `blank` shows an empty box (with a placeholder) until the helper types an amount. */
+export function Rupee({ value, onChange, step, blank, placeholder }: { value: number; onChange: (n: number) => void; step: number; blank?: boolean; placeholder?: string }) {
   return (
     <span className="flex h-11 items-center rounded-[10px] border border-line bg-white focus-within:outline-2 focus-within:outline-indigo">
       <IndianRupee className="ml-2.5 size-4 shrink-0 text-muted" />
-      <input type="number" value={value} onChange={(e) => onChange(+e.target.value)} step={step} className="num w-full bg-transparent px-2 text-[15px] outline-none" />
+      <input type="number" inputMode="numeric" min={0} value={blank ? '' : value} placeholder={placeholder} onChange={(e) => onChange(+e.target.value)} step={step} className="num w-full bg-transparent px-2 text-[15px] outline-none placeholder:text-muted/60" />
     </span>
   )
 }
 
-export function Seg<V extends string | number>({ value, onChange, opts }: { value: V; onChange: (v: V) => void; opts: [V, string][] }) {
+/** `value` undefined means not answered yet: no option is highlighted. */
+export function Seg<V extends string | number>({ value, onChange, opts }: { value: V | undefined; onChange: (v: V) => void; opts: [V, string][] }) {
   return (
     <div className="flex h-11 rounded-[10px] border border-line bg-white p-0.5" role="radiogroup">
       {opts.map(([v, l]) => (
