@@ -68,16 +68,59 @@ export function useListen(lang: Lang, onFinal: (text: string) => void) {
   return { listening, interim, error, start, stop, supported: speechSupported() }
 }
 
+// Browsers load voices late, so keep the list fresh instead of reading it once.
+let voices: SpeechSynthesisVoice[] = []
+if (typeof speechSynthesis !== 'undefined') {
+  voices = speechSynthesis.getVoices()
+  speechSynthesis.addEventListener?.('voiceschanged', () => {
+    voices = speechSynthesis.getVoices()
+  })
+}
+
+// Female Indian voices first (Didi is a woman), then any Indian voice. Names cover Chrome, Edge, Android and Apple.
+const PREFERRED: Record<Lang, RegExp[]> = {
+  hi: [/swara/i, /kalpana/i, /lekha/i, /google.*(hindi|हिन्दी)/i, /hindi|हिन्दी/i],
+  en: [/neerja/i, /heera/i, /veena/i, /google.*english.*india/i, /india/i],
+}
+const norm = (l: string) => l.toLowerCase().replace('_', '-')
+
+/** The best installed voice that actually speaks this language with an Indian accent, or null. */
+export function pickVoice(lang: Lang): SpeechSynthesisVoice | null {
+  const want = lang === 'hi' ? 'hi-in' : 'en-in'
+  const local = voices.filter((v) => norm(v.lang) === want || (lang === 'hi' && norm(v.lang).startsWith('hi')))
+  if (!local.length) return null
+  for (const re of PREFERRED[lang]) {
+    const hit = local.find((v) => re.test(v.name))
+    if (hit) return hit
+  }
+  // Prefer the higher-quality neural/online voices when names don't match.
+  return local.find((v) => /natural|online|neural/i.test(v.name)) ?? local[0]
+}
+
+/** Read numbers the way a person in Barabanki would say them, not digit by digit in English. */
+function forSpeech(text: string, lang: Lang) {
+  const hi = lang === 'hi'
+  // Money only: "₹1,06,000" -> "106000 रुपये", "₹2.07 L" -> "2.07 लाख रुपये". Other numbers (13 km, 10 cows) stay as they are.
+  let s = text.replace(/~?\s?₹\s?(\d+(?:,\d+)*(?:\.\d+)?)(\s?L\b)?/g, (m, n: string, l?: string) => {
+    const about = m.startsWith('~') ? (hi ? 'लगभग ' : 'about ') : ''
+    const num = n.replace(/,/g, '')
+    return ` ${about}${num} ${l ? (hi ? 'लाख रुपये' : 'lakh rupees') : hi ? 'रुपये' : 'rupees'}`
+  })
+  if (hi) s = s.replace(/%/g, ' प्रतिशत').replace(/×/g, ' गुना')
+  return s
+}
+
 let speakingId = 0
 export function speak(text: string, lang: Lang, onEnd?: () => void) {
   if (typeof speechSynthesis === 'undefined') return
   speechSynthesis.cancel()
-  const u = new SpeechSynthesisUtterance(text.replace(/₹/g, lang === 'hi' ? ' रुपये ' : ' rupees '))
+  const u = new SpeechSynthesisUtterance(forSpeech(text, lang))
   u.lang = lang === 'hi' ? 'hi-IN' : 'en-IN'
-  const voices = speechSynthesis.getVoices()
-  const v = voices.find((x) => x.lang === u.lang) || voices.find((x) => x.lang.startsWith(lang))
+  const v = pickVoice(lang)
   if (v) u.voice = v
-  u.rate = 0.95
+  // A touch slower and warmer for Hindi, so it sounds like Didi talking, not an announcement.
+  u.rate = lang === 'hi' ? 0.9 : 0.95
+  u.pitch = 1.05
   const id = ++speakingId
   u.onend = () => id === speakingId && onEnd?.()
   speechSynthesis.speak(u)
