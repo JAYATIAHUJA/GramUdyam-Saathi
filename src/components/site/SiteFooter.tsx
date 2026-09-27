@@ -26,7 +26,7 @@ export function SiteFooter() {
           <h2 className="font-display text-[17px] font-bold">{t('Use Saathi', 'साथी का उपयोग')}</h2>
           <ul className="mt-3 space-y-2 text-[14.5px] text-white/80">
             {LINKS.map((l) => (
-              <li key={l.to}>
+              <li key={l.to} className={l.desktop ? 'hidden md:list-item' : undefined}>
                 <NavLink to={l.to} className="hover:text-white hover:underline">
                   {t(l.en, l.hi)}
                 </NavLink>

@@ -112,7 +112,7 @@ export function SimpleReport({ plan, onFull, narration }: { plan: Plan; onFull: 
           </ul>
         </section>
 
-        <button onClick={onFull} className="mx-auto inline-flex shrink-0 items-center gap-1.5 py-1 text-[14px] font-semibold text-indigo hover:underline">
+        <button onClick={onFull} className="mx-auto hidden shrink-0 md:inline-flex items-center gap-1.5 py-1 text-[14px] font-semibold text-indigo hover:underline">
           {t('See full calculation (for helpers and officers)', 'पूरा हिसाब देखें (सहायक और अधिकारी के लिए)')} <ArrowRight className="size-4" />
         </button>
 

@@ -37,7 +37,8 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
             to={l.to}
             className={({ isActive }) =>
               clsx(
-                'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5',
+                'shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5',
+                l.desktop ? 'hidden md:inline-flex' : 'inline-flex',
                 dark ? (isActive ? 'border-white bg-white/15' : 'border-white/25 text-white/85') : isActive ? 'border-indigo bg-indigo-soft text-indigo' : 'border-line bg-white text-ink/80',
               )
             }
