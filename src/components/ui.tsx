@@ -121,7 +121,7 @@ export function VerdictDot({ v }: { v: Verdict }) {
   )
 }
 
-export function ReadAloud({ text, lang, className, label }: { text: string; lang: Lang; className?: string; label?: string }) {
+export function ReadAloud({ text, lang, className, label }: { text: string; lang: Lang; className?: string; label?: ReactNode }) {
   const [on, setOn] = useState(false)
   const t = useT()
   useEffect(() => () => stopSpeaking(), [])
