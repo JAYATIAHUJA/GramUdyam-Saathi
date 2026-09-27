@@ -6,6 +6,7 @@ import Saathi from './pages/saathi/Saathi'
 import PlanPage from './pages/plan/PlanPage'
 import { Didi } from './components/art'
 import { useT } from './lib/store'
+import { useWide } from './lib/useWide'
 
 const Officer = lazy(() => import('./pages/officer/Officer'))
 const Operator = lazy(() => import('./pages/operator/Operator'))
@@ -37,15 +38,7 @@ function OfflineBanner() {
 /** Helper, officer and engine screens are built for a computer. On a phone, point people to their own plan instead. */
 function DesktopOnly({ children }: { children: ReactNode }) {
   const t = useT()
-  const query = '(min-width: 768px)'
-  const [wide, setWide] = useState(() => typeof window === 'undefined' || window.matchMedia(query).matches)
-  useEffect(() => {
-    const mq = window.matchMedia(query)
-    const on = () => setWide(mq.matches)
-    mq.addEventListener('change', on)
-    return () => mq.removeEventListener('change', on)
-  }, [])
-  if (wide) return <>{children}</>
+  if (useWide()) return <>{children}</>
   return (
     <main id="main" className="grid min-h-dvh place-items-center bg-paper px-6 text-center">
       <div className="flex max-w-[320px] flex-col items-center">
