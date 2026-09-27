@@ -2,7 +2,7 @@ import { clsx } from 'clsx'
 import { Search, UserPlus } from 'lucide-react'
 import { useState } from 'react'
 import { ActivityArt } from '../../components/art'
-import { VerdictPill } from '../../components/ui'
+import { VERDICT, VerdictDot } from '../../components/ui'
 import { VILLAGES } from '../../data/villages'
 import type { PlanInput } from '../../engine/plan'
 import { planFor, useAllCases } from '../../lib/plans'
@@ -37,11 +37,23 @@ export function QueuePanel({ editing, onOpen }: { editing: string | null; onOpen
                 <span className="block truncate text-[14px] font-semibold">{c.input.name}</span>
                 <span className="block truncate text-[12px] text-muted">{t(VILLAGES.find((v) => v.lgd === c.input.lgd)?.name ?? '', VILLAGES.find((v) => v.lgd === c.input.lgd)?.nameHi ?? '')}</span>
               </span>
-              <VerdictPill v={planFor(c, false).verdict} />
+              <VerdictDot v={planFor(c, false).verdict} />
             </button>
           </li>
         ))}
       </ul>
+      <div className="mt-2 hidden justify-between border-t border-line px-1 pt-2 text-[11.5px] text-muted lg:flex">
+        {(['go', 'caution', 'rethink'] as const).map((v) => {
+          const m = VERDICT[v]
+          const Icon = m.icon
+          return (
+            <span key={v} className="inline-flex items-center gap-1">
+              <Icon className="size-3.5" style={{ color: m.color }} aria-hidden />
+              {t(m.en, m.hi)}
+            </span>
+          )
+        })}
+      </div>
     </aside>
   )
 }

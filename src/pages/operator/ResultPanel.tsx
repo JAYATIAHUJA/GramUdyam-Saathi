@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import { CalendarClock, Printer, Send, Wallet } from 'lucide-react'
+import { CalendarClock, ChevronDown, Printer, Send, Wallet } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { ActivityArt } from '../../components/art'
 import { VerdictStamp } from '../../components/ui'
@@ -39,14 +39,22 @@ export function ResultPanel({ plan, activity, onPrint, onSend }: { plan: Plan; a
                 {r.route.rule!.corporation} {t(r.route.rule!.product, r.route.rule!.productHi)}, {(r.route.rule!.ratePa * 100).toFixed(1)}%
               </div>
             </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <dl className="mt-2 grid grid-cols-2 gap-2">
               <Kv icon={<CalendarClock className="size-4" />} k={t('Every 3 months', 'हर 3 महीने')} v={inr(r.schedule.instalment)} />
               <Kv icon={<Wallet className="size-4" />} k={t('Asked for', 'माँगा था')} v={lakh(plan.chosen.loan)} />
+            </dl>
+            <details className="group mt-2 rounded-xl border border-line">
+              <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-2 text-[12.5px] font-bold text-muted hover:text-ink">
+                {t('Details', 'विस्तार')}
+                <ChevronDown className="size-4 transition-transform group-open:rotate-180" />
+              </summary>
+              <dl className="grid grid-cols-2 gap-2 px-2 pb-2">
               <Kv k={t('Safety (DSCR)', 'सुरक्षा (DSCR)')} v={dscr(r.projection!.minDscr)} good={(r.projection?.minDscr ?? 0) >= 1.5} />
               <Kv k={t('Chance of trouble', 'दिक़्क़त की संभावना')} v={pct(r.mc?.pDefault ?? 0)} good={(r.mc?.pDefault ?? 1) < 0.15} />
               <Kv k={t('Right-fit score', 'फ़िट स्कोर')} v={`${plan.fit.score}/100`} good={plan.fit.score >= 65} />
               <Kv k={t('Market crowding', 'बाज़ार में भीड़')} v={`${plan.feasibility.saturation.index.toFixed(2)}×`} good={plan.feasibility.saturation.index <= 1} />
-            </div>
+              </dl>
+            </details>
           </>
         ) : (
           <p className="mt-3 rounded-xl bg-risk-soft p-3 text-[14px]">{t(r.route.flags[0]?.en ?? '', r.route.flags[0]?.hi ?? '')}</p>

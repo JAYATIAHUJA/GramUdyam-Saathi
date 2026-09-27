@@ -96,6 +96,18 @@ export function VerdictPill({ v }: { v: Verdict }) {
   )
 }
 
+/** Icon-only verdict for dense lists; the label lives in the tooltip and for screen readers. */
+export function VerdictDot({ v }: { v: Verdict }) {
+  const t = useT()
+  const m = VERDICT[v]
+  const Icon = m.icon
+  return (
+    <span className="grid size-7 shrink-0 place-items-center rounded-full" style={{ color: m.color, background: m.color + '14' }} title={t(m.en, m.hi)} role="img" aria-label={t(m.en, m.hi)}>
+      <Icon className="size-4" aria-hidden />
+    </span>
+  )
+}
+
 export function ReadAloud({ text, lang, className, label }: { text: string; lang: Lang; className?: string; label?: string }) {
   const [on, setOn] = useState(false)
   const t = useT()
