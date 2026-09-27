@@ -9,18 +9,11 @@ import { useApp, useT, type Lang } from '../lib/store'
 
 export function Logo({ light = false, compact = false }: { light?: boolean; compact?: boolean }) {
   return (
-    <Link to="/" className="flex items-center gap-2.5 group" aria-label="GramUdyam Saathi home">
-      <svg viewBox="0 0 40 40" className="size-9 shrink-0" aria-hidden>
-        <rect width="40" height="40" rx="10" fill={light ? '#fff' : '#2E3A8C'} />
-        <path d="M8 29 L20 11 L32 29" fill="none" stroke="#F2A900" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" />
-        <path d="M14 29 v-6 h12 v6" fill="none" stroke={light ? '#2E3A8C' : '#fff'} strokeWidth="2.6" strokeLinejoin="round" />
-        <circle cx="20" cy="20" r="2.6" fill={light ? '#2E3A8C' : '#fff'} />
-      </svg>
-      {!compact && (
-        <span className="leading-none">
-          <span className={clsx('font-display font-bold text-[19px] block tracking-tight', light ? 'text-white' : 'text-indigo')}>GramUdyam Saathi</span>
-          <span className={clsx('text-[12px] font-medium', light ? 'text-white/70' : 'text-muted')}>ग्रामउद्यम साथी</span>
-        </span>
+    <Link to="/" className={clsx('flex shrink-0 items-center', light && 'rounded-xl bg-white px-2.5 py-1.5')} aria-label="GramUdyam Saathi home">
+      {compact ? (
+        <img src="/brand/logo-mark.webp" alt="GramUdyam Saathi" width={115} height={112} className="h-10 w-auto" />
+      ) : (
+        <img src="/brand/logo-lockup.webp" alt="GramUdyam Saathi" width={482} height={112} className={clsx('w-auto', light ? 'h-9' : 'h-11')} />
       )}
     </Link>
   )

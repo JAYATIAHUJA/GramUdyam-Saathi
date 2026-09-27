@@ -50,6 +50,7 @@ export default function Dpr() {
         </button>
       </div>
       <article className="print-page mx-auto max-w-[820px] bg-white px-10 py-10 text-[13.5px] shadow-xl">
+        <img src="/brand/logo-full.webp" alt="GramUdyam Saathi: AI-driven business advisory and financial structuring for rural micro-entrepreneurs" width={948} height={220} className="mb-5 h-16 w-auto" />
         <header className="flex items-start justify-between gap-6 border-b-4 border-marigold pb-4">
           <div>
             <div className="text-[12px] font-semibold text-muted">Detailed Project Report / विस्तृत परियोजना रिपोर्ट</div>
