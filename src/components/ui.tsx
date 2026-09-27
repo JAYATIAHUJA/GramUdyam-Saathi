@@ -96,6 +96,19 @@ export function VerdictPill({ v }: { v: Verdict }) {
   )
 }
 
+/** Icon plus a short label, no pill chrome: for tables where many verdicts sit in one column. */
+export function VerdictTag({ v }: { v: Verdict }) {
+  const t = useT()
+  const m = VERDICT[v]
+  const Icon = m.icon
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold whitespace-nowrap" style={{ color: m.color }}>
+      <Icon className="size-4" aria-hidden />
+      {t(m.en, m.hi)}
+    </span>
+  )
+}
+
 /** Icon-only verdict for dense lists; the label lives in the tooltip and for screen readers. */
 export function VerdictDot({ v }: { v: Verdict }) {
   const t = useT()

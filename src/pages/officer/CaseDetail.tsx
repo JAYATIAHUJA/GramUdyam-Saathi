@@ -1,8 +1,8 @@
 import { clsx } from 'clsx'
-import { FileText, Flag, MessageSquare, X } from 'lucide-react'
+import { ArrowRight, FileText, Flag, MessageSquare, X } from 'lucide-react'
 import { useState } from 'react'
 import { ActivityArt } from '../../components/art'
-import { VerdictStamp } from '../../components/ui'
+import { VERDICT, VerdictTag } from '../../components/ui'
 import type { Plan } from '../../engine/plan'
 import { dscr, inr, lakh, pct } from '../../lib/format'
 import { type SavedCase, useApp, useT } from '../../lib/store'
@@ -19,49 +19,59 @@ export function CaseDetail({ c, p, onClose }: { c: SavedCase; p: Plan; onClose: 
   const r = p.recommended
   return (
     <aside className="card flex flex-col overflow-hidden max-lg:fixed max-lg:inset-0 max-lg:z-50 max-lg:rounded-none max-lg:border-0 lg:min-h-0" role="dialog" aria-label={c.input.name}>
-      <div className="flex shrink-0 items-start gap-3 border-b border-line p-3.5">
-        <ActivityArt code={p.feasibility.activity.code} className="size-12" />
+      <div className="h-1 shrink-0" style={{ background: VERDICT[p.verdict].color }} aria-hidden />
+      <div className="flex shrink-0 items-start gap-3 border-b border-line px-4 py-3">
+        <ActivityArt code={p.feasibility.activity.code} className="size-11 rounded-xl" />
         <div className="min-w-0 flex-1">
-          <div className="font-display text-[21px] leading-tight font-bold">{c.input.name}</div>
-          <div className="truncate text-[13px] text-muted">
-            {t(p.feasibility.activity.name.en, p.feasibility.activity.name.hi)}, {t(p.feasibility.village.name, p.feasibility.village.nameHi)}
+          <div className="flex items-center gap-2">
+            <div className="truncate font-display text-[19px] leading-tight font-bold">{c.input.name}</div>
           </div>
-          <div className="text-[12px] text-muted">
-            {c.id} · {c.input.category} · {t('income', 'आय')} {lakh(c.input.familyIncome)}
+          <div className="truncate text-[12.5px] text-muted">
+            {t(p.feasibility.activity.name.en, p.feasibility.activity.name.hi)} · {t(p.feasibility.village.name, p.feasibility.village.nameHi)}
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11.5px]">
+            <VerdictTag v={p.verdict} />
+            <span className="text-line">|</span>
+            <span className="num rounded bg-khadi px-1.5 py-0.5 font-semibold text-ink/70">{c.id}</span>
+            <span className="rounded bg-khadi px-1.5 py-0.5 font-semibold text-ink/70">{c.input.category}</span>
+            <span className="rounded bg-khadi px-1.5 py-0.5 font-semibold text-ink/70">
+              {t('income', 'आय')} <span className="num">{lakh(c.input.familyIncome)}</span>
+            </span>
           </div>
         </div>
-        <button onClick={onClose} className="grid size-9 shrink-0 place-items-center rounded-full hover:bg-khadi" aria-label={t('Close', 'बंद करें')}>
-          <X className="size-5" />
+        <button onClick={onClose} className="grid size-8 shrink-0 place-items-center rounded-full text-muted hover:bg-khadi hover:text-ink" aria-label={t('Close', 'बंद करें')}>
+          <X className="size-4.5" />
         </button>
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto p-3.5 lg:min-h-0">
-        <div className="flex items-center gap-3">
-          <div className="grid flex-1 grid-cols-2 gap-2">
-            <div className="rounded-xl bg-khadi p-2.5">
-              <div className="text-[12px] text-muted">{t('Asked', 'माँगा')}</div>
-              <div className="num text-[20px] font-bold text-ink/70">{inr(p.chosen.loan)}</div>
-              <div className="text-[11.5px] text-muted">{t(p.chosen.unit.size.label.en, p.chosen.unit.size.label.hi)}</div>
-            </div>
-            <div className="rounded-xl bg-go-soft p-2.5">
-              <div className="text-[12px] text-go">{t('Advised', 'सुझाया')}</div>
-              <div className="num text-[20px] font-bold text-go">{inr(r.loan)}</div>
-              <div className="text-[11.5px] text-muted">{t(r.unit.size.label.en, r.unit.size.label.hi)}</div>
-            </div>
+      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 lg:min-h-0">
+        <div className="flex items-stretch overflow-hidden rounded-xl border border-line">
+          <div className="min-w-0 flex-1 bg-khadi/60 px-3 py-2.5">
+            <div className="text-[11.5px] font-semibold text-muted">{t('Asked', 'माँगा')}</div>
+            <div className={clsx('num text-[19px] leading-tight font-bold text-ink/60', r.loan < p.chosen.loan && 'line-through decoration-1')}>{inr(p.chosen.loan)}</div>
+            <div className="truncate text-[11.5px] text-muted">{t(p.chosen.unit.size.label.en, p.chosen.unit.size.label.hi)}</div>
           </div>
-          <div className="origin-right scale-[0.85]">
-            <VerdictStamp v={p.verdict} size="sm" animate={false} />
+          <div className="grid w-8 shrink-0 place-items-center bg-white text-muted">
+            <ArrowRight className="size-4" />
+          </div>
+          <div className="min-w-0 flex-1 bg-go-soft px-3 py-2.5">
+            <div className="flex items-center justify-between gap-1 text-[11.5px] font-semibold text-go">
+              {t('Advised', 'सुझाया')}
+              {r.loan < p.chosen.loan && <span className="num rounded bg-go px-1 text-[10.5px] text-white">−{Math.round((1 - r.loan / p.chosen.loan) * 100)}%</span>}
+            </div>
+            <div className="num text-[19px] leading-tight font-extrabold text-go">{inr(r.loan)}</div>
+            <div className="truncate text-[11.5px] text-muted">{t(r.unit.size.label.en, r.unit.size.label.hi)}</div>
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-1.5 text-center text-[11px] text-muted">
-          <Mini v={dscr(r.projection?.minDscr)} l="DSCR" />
-          <Mini v={r.mc ? pct(r.mc.pDefault) : '-'} l={t('Risk', 'जोखिम')} />
-          <Mini v={String(p.fit.score)} l={t('Fit', 'फ़िट')} />
-          <Mini v={p.feasibility.saturation.index.toFixed(2) + '×'} l={t('Crowding', 'भीड़')} />
-        </div>
+        <dl className="grid grid-cols-4 divide-x divide-line rounded-xl border border-line text-center">
+          <Mini v={dscr(r.projection?.minDscr)} l="DSCR" bad={(r.projection?.minDscr ?? 0) < 1.5} />
+          <Mini v={r.mc ? pct(r.mc.pDefault) : '-'} l={t('Risk', 'जोखिम')} bad={(r.mc?.pDefault ?? 0) >= 0.15} />
+          <Mini v={String(p.fit.score)} l={t('Fit', 'फ़िट')} bad={p.fit.score < 65} />
+          <Mini v={p.feasibility.saturation.index.toFixed(2) + '×'} l={t('Crowding', 'भीड़')} bad={p.feasibility.saturation.index > 1} />
+        </dl>
 
-        <div className="flex gap-1 border-b border-line text-[13.5px] font-bold">
+        <div className="flex gap-1 border-b border-line text-[13px] font-bold">
           {(
             [
               ['why', t('Why', 'क्यों'), Flag],
@@ -88,11 +98,11 @@ export function CaseDetail({ c, p, onClose }: { c: SavedCase; p: Plan; onClose: 
   )
 }
 
-function Mini({ v, l }: { v: string; l: string }) {
+function Mini({ v, l, bad }: { v: string; l: string; bad?: boolean }) {
   return (
-    <div className="rounded-lg bg-khadi px-1 py-1.5">
-      <div className="num text-[16px] font-bold text-ink">{v}</div>
-      {l}
+    <div className="px-1 py-2">
+      <dd className={clsx('num text-[15px] leading-tight font-bold', bad ? 'text-caution' : 'text-ink')}>{v}</dd>
+      <dt className="text-[11px] text-muted">{l}</dt>
     </div>
   )
 }
