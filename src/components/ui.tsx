@@ -96,6 +96,19 @@ export function VerdictPill({ v }: { v: Verdict }) {
   )
 }
 
+/** A term with a dotted underline that explains itself on hover, focus or tap. */
+export function Tip({ tip, children, className, dark }: { tip: string; children: ReactNode; className?: string; dark?: boolean }) {
+  return (
+    <span tabIndex={0} className={clsx('group/tip relative inline-flex cursor-help items-center underline decoration-dotted decoration-1 underline-offset-[3px] outline-none', dark ? 'decoration-white/40' : 'decoration-ink/30', className)}>
+      {children}
+      <span role="tooltip" className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-[220px] -translate-x-1/2 translate-y-1 rounded-lg bg-ink px-2.5 py-1.5 text-left text-[12px] leading-snug font-medium text-white no-underline opacity-0 shadow-lg transition-all duration-150 group-hover/tip:translate-y-0 group-hover/tip:opacity-100 group-focus/tip:translate-y-0 group-focus/tip:opacity-100">
+        {tip}
+        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-ink" aria-hidden />
+      </span>
+    </span>
+  )
+}
+
 /** Icon plus a short label, no pill chrome: for tables where many verdicts sit in one column. */
 export function VerdictTag({ v }: { v: Verdict }) {
   const t = useT()
