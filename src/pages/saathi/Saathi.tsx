@@ -69,7 +69,7 @@ export default function Saathi() {
         <StepHeader step={step} onBack={back} />
 
         <div className="flex flex-1 flex-col px-5 pt-3 pb-2 md:min-h-0">
-          {step > 0 && step < 13 && <QuestionBubble key={step} step={step} listening={mic.listening} />}
+          {step > 0 && step < 13 && <QuestionBubble key={`q-${step}`} step={step} listening={mic.listening} />}
 
           <div className="flex-1 md:-mx-2 md:min-h-0 md:overflow-y-auto md:px-2 md:pb-1">
             {step === 0 && <WelcomeStep onStart={() => go(1)} onResume={draft.lgd ? () => go(draft.margin ? 3 : 2) : undefined} />}
@@ -106,7 +106,7 @@ export default function Saathi() {
             )}
           </div>
 
-          {step > 0 && step < 13 && <VoiceDock key={step} mic={mic} heard={heard} onText={onSpeech} canNext={!!prompt.canNext?.(draft)} onNext={next} />}
+          {step > 0 && step < 13 && <VoiceDock key={`dock-${step}`} mic={mic} heard={heard} onText={onSpeech} canNext={!!prompt.canNext?.(draft)} onNext={next} />}
         </div>
       </main>
 
